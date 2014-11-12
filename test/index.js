@@ -111,6 +111,7 @@ test('drawer hides when responsive width threshold is crossed', function (t) {
     // Drawer visible
     t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
     t.ok(outerWidth(drawerView.main) < outerWidth(drawerView.el), 'main container partial width');
+    t.equal(rawStyle(drawerView.toggle, 'display'), 'none', 'hidden toggle button');
     
     document.body.style.width = "400px";
     trigger(window, 'resize');
@@ -120,6 +121,7 @@ test('drawer hides when responsive width threshold is crossed', function (t) {
       // Drawer hidden
       t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is hidden');
       t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
+      t.equal(rawStyle(drawerView.toggle, 'display'), 'inline-block', 'hidden toggle button');
       
       document.body.style.width = "1000px";
       trigger(window, 'resize');
@@ -306,7 +308,7 @@ test('overlay when drawer is selected');
 test('triggers narrow mode') // drawerView.narrow = true;
 test('triggers right drawer mode') // drawerView.rightDrawer = true;
 test('renders with a header');
-tset('narrow mode to normal mode transition animations');
+test('narrow mode to normal mode transition animations');
 
 // test('replaces default elements with elements defined with data-hook', function (t) {
   

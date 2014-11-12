@@ -3,7 +3,6 @@ var View = require('ampersand-view');
 var defaultTemplate = require('./lib/default-template');
 var style = require('./lib/outfit');
 var outerWidth = require('outerwidth');
-var trigger = require('./lib/trigger');
 var prefixedCalc = require('./lib/prefixed-calc');
 var prefix = require('./lib/prefix');
 var rawStyle = require('./lib/raw-style');
@@ -120,6 +119,7 @@ module.exports = View.extend({
   // Hide the drawer when it's less than the response width
   _triggerNarrowMode: function () {
     
+    this.toggle.style.display = this.defaultToggleDisplay;
     this.el.classList.add(this.defaultNarrowClass);
     
     style(this.main, {
@@ -132,6 +132,7 @@ module.exports = View.extend({
   // Show the drawer when it's more than the response width
   _triggerWideMode: function () {
     
+    this.toggle.style.display = 'none';
     this.el.classList.remove(this.defaultNarrowClass);
     
     style(this.main, {
