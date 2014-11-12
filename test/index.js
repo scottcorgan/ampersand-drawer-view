@@ -284,11 +284,29 @@ test('toggle button is hidden when not in narrow mode', function (t) {
   t.end();
 });
 
-test('drawer animation speed');
-test('trigges narrow mode') // drawerView.narrow = true;
-test('trigges right drawer mode') // drawerView.rightDrawer = true;
-test('renders with a header');
+test('drawer animation speed', function (t) {
+  
+  var drawerView = new DrawerView({
+    drawerSpeed: 120
+  });
+  
+  document.body.appendChild(drawerView.el);
+  
+  // TODO: this test doesn't really test anything, but
+  // there were issues getting the transition style
+  t.equal(drawerView.drawerSpeed, 120, 'drawer speed');  
+  
+  drawerView.remove();
+  t.end();
+  
+});
+
 test('overlay when drawer is selected');
+
+test('triggers narrow mode') // drawerView.narrow = true;
+test('triggers right drawer mode') // drawerView.rightDrawer = true;
+test('renders with a header');
+tset('narrow mode to normal mode transition animations');
 
 // test('replaces default elements with elements defined with data-hook', function (t) {
   

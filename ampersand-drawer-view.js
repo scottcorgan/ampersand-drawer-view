@@ -20,7 +20,7 @@ module.exports = View.extend({
     rightDrawer: ['boolean', false, false],
     withHeader: ['boolean', false, false], // TODO: test this next!
     defaultNarrowClass: ['string', false , 'narrow'],
-    speed: ['number', false, 0],
+    drawerSpeed: ['number', false, 0],
     defaultToggleDisplay: ['string', false, 'inline-block'],
     
     // Flags
@@ -91,14 +91,15 @@ module.exports = View.extend({
   
   _setDefaultStyles: function () {
     
-    style(this.drawer, {
+    var drawerStyles = {
       width: this.drawerWidth + 'px'
-    });
+    };
+    drawerStyles[prefix.css + 'transition'] = 'all ' + this.drawerSpeed + 'ms ease-in-out;';
+    style(this.drawer, drawerStyles);
     
     var mainStyles = {
       width: prefixedCalc('100% - ' + this.drawerWidth + 'px') + ';'
     };
-    mainStyles[prefix.css + 'transition'] = 'all ' + this.speed + 'ms ease-in-out;';
     style(this.main, mainStyles);
   },
   
