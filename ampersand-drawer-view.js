@@ -7,6 +7,9 @@ var trigger = require('./lib/trigger');
 var prefixedCalc = require('./lib/prefixed-calc');
 
 module.exports = View.extend({
+  
+  autoRender: true,
+  
   props: {
     template: ['string', true, defaultTemplate()],
     drawerWidth: ['number', false, 256],
@@ -15,6 +18,7 @@ module.exports = View.extend({
     rightDrawer: ['boolean', false, false],
     withHeader: ['boolean', false, false], // TODO: test this next!
     defaultNarrowClass: ['string', false , 'narrow'],
+    
     main: 'object',
     drawer: 'object',
     toggle: 'object'
@@ -31,8 +35,6 @@ module.exports = View.extend({
       window.removeEventListener('resize', resizeHandler);
     });
     this.listenTo(this, 'resize', resizeHandler);
-    
-    this.render();
     
     return this;
   },
