@@ -11,7 +11,8 @@ var hasClass = require('../lib/has-class');
 var style = require('../lib/outfit');
 
 var DRAWER_VISIBLE_MATRIX = 'matrix(1, 0, 0, 1, 0, 0)';
-var DRAWER_HIDDEN_MATRIX = 'matrix(1, 0, 0, 1, -256, 0)';
+var DRAWER_HIDDEN_LEFT_MATRIX = 'matrix(1, 0, 0, 1, -256, 0)';
+var DRAWER_HIDDEN_RIGHT_MATRIX = 'matrix(1, 0, 0, 1, 256, 0)';
 
 // Set up body,html
 style(document.querySelector('html'), {
@@ -55,6 +56,11 @@ test('default layout', function (t) {
   t.equal(rawStyle(drawerView.drawer, 'left'), '0px', 'position location left');
   t.equal(rawStyle(drawerView.drawer, 'top'), '0px', 'position location top');
   t.equal(rawStyle(drawerView.main, 'float'), 'right', 'main float');
+  t.equal(rawStyle(drawerView.drawer, 'z-index'), '3', 'drawer z-index');
+  t.equal(rawStyle(drawerView.main, 'z-index'), '1', 'main z-index');
+  
+  t.notOk(drawerView.narrow, 'narrow flag set');
+  t.equal(drawerView.selected, 'main', 'main selected');
   
   drawerView.remove();
   t.end();
@@ -83,7 +89,7 @@ test('custom responsive width', function (t) {
   
   setTimeout(function () {
     
-    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_MATRIX, 'drawer is hidden');
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is hidden');
     t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
     
     drawerView.remove();
@@ -112,7 +118,7 @@ test('drawer hides when responsive width threshold is crossed', function (t) {
     _.defer(function () {
       
       // Drawer hidden
-      t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_MATRIX, 'drawer is hidden');
+      t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is hidden');
       t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
       
       document.body.style.width = "1000px";
@@ -139,12 +145,138 @@ test('renders element as narrow', function (t) {
   });
   
   t.ok(hasClass(drawerView.el, 'narrow'), 'narrow class added to container');
+  t.ok(drawerView.narrow, 'narrow flag set');
   t.end();
 });
 
-test('renders a drawer on the right side');
+test('renders the drawer on the right side', function (t) {
+  
+  var drawerView = new DrawerView({
+    rightDrawer: true
+  });
+  
+  document.body.appendChild(drawerView.el)
+  
+  _.defer(function () {
+    
+    t.equal(rawStyle(drawerView.drawer, 'right'), '0px', 'drawer position location right');
+    t.equal(rawStyle(drawerView.main, 'float'), 'left', 'main float');
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
+test('narrow mode with right drawer', function (t) {
+  
+  var drawerView = new DrawerView({
+    rightDrawer: true,
+    forceNarrow: true
+  });
+  
+  document.body.appendChild(drawerView.el)
+  
+  _.defer(function () {
+    
+    t.equal(rawStyle(drawerView.drawer, 'right'), '0px', 'drawer position location right');
+    t.equal(rawStyle(drawerView.main, 'float'), 'left', 'main float');
+    
+    // Drawer hidden
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_RIGHT_MATRIX, 'drawer is hidden');
+    t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
+test('open close the drawer', function (t) {
+  
+  var drawerView = new DrawerView({
+    forceNarrow: true
+  });
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    // Drawer hidden
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is hidden');
+    t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
+    
+    drawerView.openDrawer();
+    
+    // Drawer visible
+    t.equal(drawerView.selected, 'drawer', 'drawer selected');
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
+    t.equal(outerWidth(drawerView.main), outerWidth(drawerView.el), 'main container width');
+    
+    drawerView.closeDrawer();
+    
+    // Drawer hidden
+    t.equal(drawerView.selected, 'main', 'main selected');
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is visible');
+    t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
+test('toggles drawer', function (t) {
+  
+  var drawerView = new DrawerView({
+    forceNarrow: true
+  });
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    drawerView.toggleDrawer();
+    
+    // Drawer visible
+    t.equal(drawerView.selected, 'drawer', 'drawer selected');
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
+    t.equal(outerWidth(drawerView.main), outerWidth(drawerView.el), 'main container width');
+    
+    drawerView.toggleDrawer();
+    
+    // Drawer hidden
+    t.equal(drawerView.selected, 'main', 'main selected');
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is visible');
+    t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
+test('toggle button toggles the drawer', function (t) {
+  
+  var drawerView = new DrawerView({
+    forceNarrow: true
+  });
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    trigger(drawerView.toggle, 'click');
+    
+    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');    
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
+test('toggle button is hidden when not in narrow mode');
+test('drawer animation speed');
+test('trigges narrow mode') // drawerView.narrow = true;
+test('trigges right drawer mode') // drawerView.rightDrawer = true;
 test('renders with a header');
-test('toggles the drawer');
+test('overlay when drawer is selected');
 
 // test('replaces default elements with elements defined with data-hook', function (t) {
   

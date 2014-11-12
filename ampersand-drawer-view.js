@@ -5,6 +5,7 @@ var style = require('./lib/outfit');
 var outerWidth = require('outerwidth');
 var trigger = require('./lib/trigger');
 var prefixedCalc = require('./lib/prefixed-calc');
+var prefix = require('./lib/prefix');
 
 module.exports = View.extend({
   
@@ -18,10 +19,20 @@ module.exports = View.extend({
     rightDrawer: ['boolean', false, false],
     withHeader: ['boolean', false, false], // TODO: test this next!
     defaultNarrowClass: ['string', false , 'narrow'],
+    speed: ['number', false, 0],
     
+    // Flags
+    narrow: ['boolean', false, false],
+    selected: ['string', false, 'main'],
+    
+    // Elements
     main: 'object',
     drawer: 'object',
     toggle: 'object'
+  },
+  
+  events: {
+    'click [data-hook=toggle]': 'toggleDrawer'
   },
   
   initialize: function () {
@@ -41,6 +52,11 @@ module.exports = View.extend({
   
   render: function () {
     
+    // TODO: test this
+    if (this.rendered) {
+      return;
+    }
+    
     this.renderWithTemplate();
     
     // Query elements
@@ -51,7 +67,11 @@ module.exports = View.extend({
     this._setDefaultStyles();
     
     if (this.forceNarrow) {
-      this.el.classList.add(this.defaultNarrowClass);
+      this._triggerNarrowMode();
+    }
+    
+    if (this.rightDrawer) {
+      this.el.classList.add('right');
     }
     
     _.defer(_.bind(function () {
@@ -67,35 +87,75 @@ module.exports = View.extend({
       width: this.drawerWidth + 'px'
     });
     
-    style(this.main, {
-      width: prefixedCalc('100% - ' + this.drawerWidth + 'px')
-    });
+    var mainStyles = {
+      width: prefixedCalc('100% - ' + this.drawerWidth + 'px') + ';'
+    };
+    mainStyles[prefix.css + 'transition'] = 'all ' + this.speed + 'ms ease-in-out;';
+    style(this.main, mainStyles);
   },
   
   _handleWindowResize: function (e) {
     
     // No need to restyle elements if view is always narrow
     if (this.forceNarrow) {
-      return;
+      return this._triggerNarrowMode();
     }
     
     if (this.el && outerWidth(this.el) <= this.responsiveWidth) {
-      
-      // Hide the drawer when it's less than the response width
-      this.el.classList.add(this.defaultNarrowClass);
-      
-      style(this.main, {
-        width: '100%'
-      });
+      return this._triggerNarrowMode();
     }
-    else {
-      
-      // Show the drawer when it's more than the response width
-      this.el.classList.remove(this.defaultNarrowClass);
-      
-      style(this.main, {
-        width: prefixedCalc('100% - ' + this.drawerWidth + 'px')
-      });
-    }
+    
+    this._triggerWideMode();
   },
+  
+  // Hide the drawer when it's less than the response width
+  _triggerNarrowMode: function () {
+    
+    this.el.classList.add(this.defaultNarrowClass);
+    
+    style(this.main, {
+      width: '100%'
+    });
+    
+    this.narrow = true;
+  },
+  
+  // Show the drawer when it's more than the response width
+  _triggerWideMode: function () {
+    
+    this.el.classList.remove(this.defaultNarrowClass);
+    
+    style(this.main, {
+      width: prefixedCalc('100% - ' + this.drawerWidth + 'px')
+    });
+    
+    this.narrow = false;
+  },
+  
+  openDrawer: function () {
+    
+    // No need to do anything if drawer is visible in the layout
+    if (!this.narrow || this.selected === 'drawer') {
+      return;
+    }
+    
+    this.selected = 'drawer';
+    this.el.classList.add('drawer');
+  },
+  
+  closeDrawer: function () {
+    
+    // Do nothing if we don't need to
+    if (!this.narrow || this.selected === 'main') {
+      return;
+    }
+    
+    this.selected = 'main';
+    this.el.classList.remove('drawer');
+  },
+  
+  toggleDrawer: function () {
+    
+    (this.selected === 'main') ? this.openDrawer() : this.closeDrawer();
+  }
 });
