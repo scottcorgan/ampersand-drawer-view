@@ -1,0 +1,59 @@
+{
+  "name": "ampersand-drawer-view",
+  "version": "1.0.0",
+  "description": "Ampersand view class for hamburger drawer-like layouts",
+  "main": "ampersand-drawer-view.js",
+  "scripts": {
+    "start": "run-browser test/index.js",
+    "test": "browserify test/index.js | tape-run | tap-spec",
+    "validate": "jshint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scottcorgan/ampersand-drawer-view.git"
+  },
+  "keywords": [
+    "backbone",
+    "view",
+    "render",
+    "menu",
+    "hamburger"
+  ],
+  "author": "Scott Corgan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scottcorgan/ampersand-drawer-view/issues"
+  },
+  "homepage": "https://github.com/scottcorgan/ampersand-drawer-view",
+  "devDependencies": {
+    "ampersand-view": "^7.1.6",
+    "browserify": "^6.3.2",
+    "jshint": "^2.5.10",
+    "outerwidth": "^1.0.0",
+    "phantomjs": "^1.9.12",
+    "run-browser": "^1.3.1",
+    "tap-spec": "^1.0.1",
+    "tape-run": "^0.3.0",
+    "testling": "^1.7.1"
+  },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/9..latest",
+      "firefox/17..latest",
+      "firefox/nightly",
+      "chrome/22..latest",
+      "chrome/canary",
+      "opera/12..latest",
+      "opera/next",
+      "safari/5.1..latest",
+      "ipad/6.0..latest",
+      "iphone/6.0..latest",
+      "android-browser/4.2..latest"
+    ]
+  },
+  "dependencies": {
+    "ampersand-view": "^7.1.6",
+    "underscore": "^1.7.0"
+  }
+}
