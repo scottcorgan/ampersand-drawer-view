@@ -7,20 +7,26 @@ var outerHeight = require('../lib/outerheight');
 var rawStyle = require('../lib/raw-style');
 var trigger = require('../lib/trigger');
 var prefix = require('../lib/prefix');
+var hasClass = require('../lib/has-class');
+var style = require('../lib/outfit');
 
 var DRAWER_VISIBLE_MATRIX = 'matrix(1, 0, 0, 1, 0, 0)';
 var DRAWER_HIDDEN_MATRIX = 'matrix(1, 0, 0, 1, -256, 0)';
 
 // Set up body,html
-var html = document.querySelector('html');
-html.style.height = '1000px';
-html.style.width = '1000px';
-html.style.margin = '0';
-html.style.padding = '0';
-document.body.style.height = '100%';
-document.body.style.width = '100%';
-document.body.style.margin = '0';
-document.body.style.padding = '0';
+style(document.querySelector('html'), {
+  height: '1000px',
+  width: '1000px',
+  margin: '0',
+  padding: '0'
+});
+
+style(document.body, {
+  height: '100%',
+  width: '100%',
+  margin: '0',
+  padding: '0'
+});
 
 test('default layout', function (t) {
   
@@ -128,12 +134,21 @@ test('drawer hides when responsive width threshold is crossed', function (t) {
 
 test('renders element as narrow', function (t) {
   
+  var drawerView = new DrawerView({
+    forceNarrow: true
+  });
   
-  
+  t.ok(hasClass(drawerView.el, 'narrow'), 'narrow class added to container');
   t.end();
 });
 
+test('renders a drawer on the right side');
+test('renders with a header');
+test('toggles the drawer');
+
 // test('replaces default elements with elements defined with data-hook', function (t) {
+  
+// // TODO: this should also work with a template
   
 //   // <div data-hook="drawer"></div>
 //   // <div data-hook="main"></div>

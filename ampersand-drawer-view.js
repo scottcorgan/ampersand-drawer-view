@@ -11,6 +11,7 @@ module.exports = View.extend({
     template: ['string', true, defaultTemplate()],
     drawerWidth: ['number', false, 256],
     responsiveWidth: ['number', false, 640],
+    forceNarrow: ['boolean', false, false],
     rightDrawer: ['boolean', false, false],
     withHeader: ['boolean', false, false], // TODO: test this next!
     defaultNarrowClass: ['string', false , 'narrow'],
@@ -47,6 +48,10 @@ module.exports = View.extend({
     
     this._setDefaultStyles();
     
+    if (this.forceNarrow) {
+      this.el.classList.add(this.defaultNarrowClass);
+    }
+    
     _.defer(_.bind(function () {
       this.trigger('resize');
     }, this));
@@ -66,6 +71,11 @@ module.exports = View.extend({
   },
   
   _handleWindowResize: function (e) {
+    
+    // No need to restyle elements if view is always narrow
+    if (this.forceNarrow) {
+      return;
+    }
     
     if (this.el && outerWidth(this.el) <= this.responsiveWidth) {
       
