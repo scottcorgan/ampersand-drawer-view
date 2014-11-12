@@ -6,6 +6,7 @@ var outerWidth = require('outerwidth');
 var trigger = require('./lib/trigger');
 var prefixedCalc = require('./lib/prefixed-calc');
 var prefix = require('./lib/prefix');
+var rawStyle = require('./lib/raw-style');
 
 module.exports = View.extend({
   
@@ -20,6 +21,7 @@ module.exports = View.extend({
     withHeader: ['boolean', false, false], // TODO: test this next!
     defaultNarrowClass: ['string', false , 'narrow'],
     speed: ['number', false, 0],
+    defaultToggleDisplay: ['string', false, 'inline-block'],
     
     // Flags
     narrow: ['boolean', false, false],
@@ -64,10 +66,16 @@ module.exports = View.extend({
     this.main = this.queryByHook('main');
     this.toggle = this.queryByHook('toggle');
     
+    // Track this value so it can be reset when it needs to be
+    this.defaultToggleDisplay = rawStyle(this.toggle, 'display');
+    
     this._setDefaultStyles();
     
     if (this.forceNarrow) {
       this._triggerNarrowMode();
+    }
+    else {
+      this.toggle.style.display = 'none';
     }
     
     if (this.rightDrawer) {

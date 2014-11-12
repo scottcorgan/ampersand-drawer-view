@@ -271,7 +271,19 @@ test('toggle button toggles the drawer', function (t) {
   });
 });
 
-test('toggle button is hidden when not in narrow mode');
+test('toggle button is hidden when not in narrow mode', function (t) {
+  
+  var drawerView = new DrawerView();
+  
+  document.body.appendChild(drawerView.el);
+  
+  t.equal(drawerView.defaultToggleDisplay, '', 'default toggle button style');
+  t.equal(rawStyle(drawerView.toggle, 'display'), 'none', 'button hidden');
+  
+  drawerView.remove();
+  t.end();
+});
+
 test('drawer animation speed');
 test('trigges narrow mode') // drawerView.narrow = true;
 test('trigges right drawer mode') // drawerView.rightDrawer = true;
