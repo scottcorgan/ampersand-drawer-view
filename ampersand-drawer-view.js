@@ -26,7 +26,6 @@ module.exports = View.extend({
     withHeader: ['boolean', false, false], // TODO: test this next!
     defaultNarrowClass: ['string', false , 'narrow'],
     drawerSpeed: ['number', false, 0],
-    defaultToggleDisplay: ['string', false, 'inline-block'],
     
     // Flags
     narrow: ['boolean', false, false],
@@ -35,13 +34,11 @@ module.exports = View.extend({
     // Elements
     main: 'any',
     drawer: 'any',
-    toggle: 'any',
     
     subviews: 'any'
   },
   
   events: {
-    'click [data-hook=adv-toggle]': 'toggleDrawer',
     'click [data-hook=adv-drawer]': '_drawerClicked'
   },
   
@@ -84,22 +81,15 @@ module.exports = View.extend({
     // Query elements
     this.drawer = this.queryByHook('adv-drawer');
     this.main = this.queryByHook('adv-main');
-    this.toggle = this.queryByHook('adv-toggle');
     
     // Render Subviews
     this.renderSubview(this.subviews.drawer, this.drawer);
     this.renderSubview(this.subviews.main, this.main);
     
-    // Track this value so it can be reset when it needs to be
-    this.defaultToggleDisplay = rawStyle(this.toggle, 'display');
-    
     this._setDefaultStyles();
     
     if (this.forceNarrow) {
       this._triggerNarrowMode();
-    }
-    else {
-      this.toggle.style.display = 'none';
     }
     
     if (this.rightDrawer) {
@@ -164,7 +154,6 @@ module.exports = View.extend({
   // Hide the drawer when it's less than the response width
   _triggerNarrowMode: function () {
     
-    this.toggle.style.display = this.defaultToggleDisplay;
     classList(this.el).add(this.defaultNarrowClass);
     
     style(this.main, {
@@ -177,7 +166,6 @@ module.exports = View.extend({
   // Show the drawer when it's more than the response width
   _triggerWideMode: function () {
     
-    this.toggle.style.display = 'none';
     classList(this.el).remove(this.defaultNarrowClass);
     
     style(this.main, {
@@ -213,8 +201,12 @@ module.exports = View.extend({
       return;
     }
     
-    this.selected = 'drawer';
     classList(this.el).add('drawer');
+    
+    // Ensures an event doesn't trigger open and close at the same time
+    _.defer(function (ctx) {
+      ctx.selected = 'drawer';
+    }, this);
   },
   
   closeDrawer: function () {
@@ -224,8 +216,12 @@ module.exports = View.extend({
       return;
     }
     
-    this.selected = 'main';
     classList(this.el).remove('drawer');
+    
+    // Ensures an event doesn't trigger open and close at the same time
+    _.defer(function (ctx) {
+      ctx.selected = 'main';
+    }, this);
   },
   
   toggleDrawer: function (e) {

@@ -38,8 +38,6 @@ test('default layout', function (t) {
   t.equal(drawerView.el.tagName, 'DIV', 'wrapper tag');
   t.ok(drawerView.drawer, 'drawer container');
   t.ok(drawerView.main, 'main content container');
-  t.ok(drawerView.toggle, 'drawer toggle');
-  t.equal(drawerView.toggle.innerText, 'Toggle', 'drawer toggle text');
   
   // Size
   t.equal(outerWidth(drawerView.el), 1000, 'default el width');
@@ -111,7 +109,6 @@ test('drawer hides when responsive width threshold is crossed', function (t) {
     // Drawer visible
     t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
     t.ok(outerWidth(drawerView.main) < outerWidth(drawerView.el), 'main container partial width');
-    t.equal(rawStyle(drawerView.toggle, 'display'), 'none', 'hidden toggle button');
     
     document.body.style.width = "400px";
     trigger(window, 'resize');
@@ -121,7 +118,6 @@ test('drawer hides when responsive width threshold is crossed', function (t) {
       // Drawer hidden
       t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is hidden');
       t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
-      t.equal(rawStyle(drawerView.toggle, 'display'), 'inline-block', 'hidden toggle button');
       
       document.body.style.width = "1000px";
       trigger(window, 'resize');
@@ -253,38 +249,6 @@ test('toggles drawer', function (t) {
     drawerView.remove();
     t.end();
   });
-});
-
-test('toggle button toggles the drawer', function (t) {
-  
-  var drawerView = new DrawerView({
-    forceNarrow: true
-  });
-  
-  document.body.appendChild(drawerView.el);
-  
-  _.defer(function () {
-    
-    trigger(drawerView.toggle, 'click');
-    
-    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');    
-    
-    drawerView.remove();
-    t.end();
-  });
-});
-
-test('toggle button is hidden when not in narrow mode', function (t) {
-  
-  var drawerView = new DrawerView();
-  
-  document.body.appendChild(drawerView.el);
-  
-  t.equal(drawerView.defaultToggleDisplay, '', 'default toggle button style');
-  t.equal(rawStyle(drawerView.toggle, 'display'), 'none', 'button hidden');
-  
-  drawerView.remove();
-  t.end();
 });
 
 test('drawer animation speed', function (t) {
