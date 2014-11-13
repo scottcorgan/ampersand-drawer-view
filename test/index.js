@@ -157,7 +157,7 @@ test('renders the drawer on the right side', function (t) {
     rightDrawer: true
   });
   
-  document.body.appendChild(drawerView.el)
+  document.body.appendChild(drawerView.el);
   
   _.defer(function () {
     
@@ -176,7 +176,7 @@ test('narrow mode with right drawer', function (t) {
     forceNarrow: true
   });
   
-  document.body.appendChild(drawerView.el)
+  document.body.appendChild(drawerView.el);
   
   _.defer(function () {
     
@@ -303,11 +303,47 @@ test('drawer animation speed', function (t) {
   
 });
 
-test('overlay when drawer is selected');
+test('triggers narrow mode', function (t) {
+  
+  var drawerView = new DrawerView();
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    drawerView.forceNarrow = true;
+    
+    t.ok(hasClass(drawerView.el, 'narrow'), 'narrow class added to container');
+    t.ok(drawerView.narrow, 'in narrow mode');
+    t.equal(rawStyle(drawerView.main, 'width'), '1000px', 'full width main');
+    
+    drawerView.remove();
+    t.end();
+  });
+  
+});
 
-test('triggers narrow mode') // drawerView.narrow = true;
-test('triggers right drawer mode') // drawerView.rightDrawer = true;
+test('triggers right drawer mode', function (t) {
+  
+  var drawerView = new DrawerView();
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    drawerView.rightDrawer = true;
+    
+    t.ok(hasClass(drawerView.el, 'right'), 'triggered right column mode');
+    t.equal(rawStyle(drawerView.drawer, 'right'), '0px', 'drawer position location right');
+    t.equal(rawStyle(drawerView.main, 'float'), 'left', 'main float');
+    
+    drawerView.remove();
+    t.end();
+  });
+}); // drawerView.rightDrawer = true;
+
 test('renders with a header');
+test('overlay when drawer is selected');
 test('narrow mode to normal mode transition animations');
 
 // test('replaces default elements with elements defined with data-hook', function (t) {

@@ -47,6 +47,8 @@ module.exports = View.extend({
       window.removeEventListener('resize', resizeHandler);
     });
     this.listenTo(this, 'resize', resizeHandler);
+    this.listenTo(this, 'change:forceNarrow', this._triggerNarrowMode, this);
+    this.listenTo(this, 'change:rightDrawer', this._triggerRightDrawerMode, this);
     
     return this;
   },
@@ -78,7 +80,7 @@ module.exports = View.extend({
     }
     
     if (this.rightDrawer) {
-      this.el.classList.add('right');
+      this._triggerRightDrawerMode();
     }
     
     _.defer(_.bind(function () {
@@ -140,6 +142,10 @@ module.exports = View.extend({
     });
     
     this.narrow = false;
+  },
+  
+  _triggerRightDrawerMode: function () {
+    this.el.classList.add('right');
   },
   
   openDrawer: function () {
