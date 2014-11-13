@@ -130,6 +130,7 @@ test('drawer hides when responsive width threshold is crossed', function (t) {
         
         // Drawer visible
         t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
+        t.notOk(drawerView.narrow, 'resets narrow flat');
         // TODO: phantomjs does not support calc(), but this test passes in browser
         // t.ok(outerWidth(drawerView.main) < outerWidth(drawerView.el), 'main container full width');
         
@@ -392,9 +393,6 @@ test.skip('closes drawer when escape key is pressed', function (t) {
   // });
 });
 
-test('resets drawer visible when taken out of narrow mode');
-test('renders with a header');
-test('overlay when drawer is selected');
 test('narrow mode to normal mode transition animations');
 
 // test('replaces default elements with elements defined with data-hook', function (t) {

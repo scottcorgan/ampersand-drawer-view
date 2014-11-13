@@ -1,8 +1,9 @@
 var _ = require('underscore');
 var View = require('ampersand-view');
+var outerWidth = require('outerwidth');
+var classList = require('class-list');
 var defaultTemplate = require('./lib/default-template');
 var style = require('./lib/outfit');
-var outerWidth = require('outerwidth');
 var prefixedCalc = require('./lib/prefixed-calc');
 var prefix = require('./lib/prefix');
 var rawStyle = require('./lib/raw-style');
@@ -33,8 +34,8 @@ module.exports = View.extend({
   },
   
   events: {
-    'click [data-hook=toggle]': 'toggleDrawer',
-    'click [data-hook=drawer]': '_drawerClicked'
+    'click [data-hook=adv-toggle]': 'toggleDrawer',
+    'click [data-hook=adv-drawer]': '_drawerClicked'
   },
   
   initialize: function () {
@@ -72,9 +73,9 @@ module.exports = View.extend({
     this.renderWithTemplate();
     
     // Query elements
-    this.drawer = this.queryByHook('drawer');
-    this.main = this.queryByHook('main');
-    this.toggle = this.queryByHook('toggle');
+    this.drawer = this.queryByHook('adv-drawer');
+    this.main = this.queryByHook('adv-main');
+    this.toggle = this.queryByHook('adv-toggle');
     
     // Track this value so it can be reset when it needs to be
     this.defaultToggleDisplay = rawStyle(this.toggle, 'display');
@@ -131,7 +132,7 @@ module.exports = View.extend({
   _triggerNarrowMode: function () {
     
     this.toggle.style.display = this.defaultToggleDisplay;
-    this.el.classList.add(this.defaultNarrowClass);
+    classList(this.el).add(this.defaultNarrowClass);
     
     style(this.main, {
       width: '100%'
@@ -144,7 +145,7 @@ module.exports = View.extend({
   _triggerWideMode: function () {
     
     this.toggle.style.display = 'none';
-    this.el.classList.remove(this.defaultNarrowClass);
+    classList(this.el).remove(this.defaultNarrowClass);
     
     style(this.main, {
       width: prefixedCalc('100% - ' + this.drawerWidth + 'px')
@@ -154,7 +155,7 @@ module.exports = View.extend({
   },
   
   _triggerRightDrawerMode: function () {
-    this.el.classList.add('right');
+    classList(this.el).add('right');
   },
   
   // Disables clicks from leaking outside the container
@@ -180,7 +181,7 @@ module.exports = View.extend({
     }
     
     this.selected = 'drawer';
-    this.el.classList.add('drawer');
+    classList(this.el).add('drawer');
   },
   
   closeDrawer: function () {
@@ -191,7 +192,7 @@ module.exports = View.extend({
     }
     
     this.selected = 'main';
-    this.el.classList.remove('drawer');
+    classList(this.el).remove('drawer');
   },
   
   toggleDrawer: function (e) {
