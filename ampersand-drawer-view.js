@@ -88,8 +88,8 @@ module.exports = View.extend({
     this.toggle = this.queryByHook('adv-toggle');
     
     // Render Subviews
-    // this.subviews.drawer = this.subviews.drawer || new DrawerContentView();
     this.renderSubview(this.subviews.drawer, this.drawer);
+    this.renderSubview(this.subviews.main, this.main);
     
     // Track this value so it can be reset when it needs to be
     this.defaultToggleDisplay = rawStyle(this.toggle, 'display');
@@ -127,6 +127,10 @@ module.exports = View.extend({
     
     if (!this.subviews.drawer) {
       this.subviews.drawer = new DefaultView();
+    }
+    
+    if (!this.subviews.main) {
+      this.subviews.main = new DefaultView();
     }
   },
   

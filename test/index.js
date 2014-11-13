@@ -384,7 +384,31 @@ test('custom drawer view', function (t) {
   _.defer(function () {
     
     t.deepEqual(drawer, drawerView.subviews.drawer, 'injected custom drawer view');
-    t.equal(drawerView.queryByHook('adv-drawer').innerHTML, '<div>Custom Drawer</div>', 'append custom template');
+    t.equal(drawerView.drawer.innerHTML, '<div>Custom Drawer</div>', 'append custom template');
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
+test('custom main view', function (t) {
+  
+  var Main = View.extend({
+    template: '<div>Custom Main View</div>'
+  });
+  var main = new Main();
+  var drawerView = new DrawerView({
+    subviews: {
+      main: main
+    }
+  });
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    t.deepEqual(main, drawerView.subviews.main, 'injected custom main view');
+    t.ok(drawerView.main.innerHTML.indexOf('<div>Custom Main View</div>') > -1, 'append custom template');
     
     drawerView.remove();
     t.end();
