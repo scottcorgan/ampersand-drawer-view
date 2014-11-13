@@ -340,8 +340,59 @@ test('triggers right drawer mode', function (t) {
     drawerView.remove();
     t.end();
   });
-}); // drawerView.rightDrawer = true;
+});
 
+test('closes drawer when clicking outside of drawer', function (t) {
+  
+  var drawerView = new DrawerView({
+    forceNarrow: true
+  });
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    drawerView.openDrawer();
+    
+    t.equal(drawerView.selected, 'drawer', 'drawer open');
+    trigger(drawerView.drawer, 'click');
+    t.equal(drawerView.selected, 'drawer', 'drawer stil open');
+    
+    trigger(drawerView.main, 'click');
+    t.equal(drawerView.selected, 'main', 'drawer closed');
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
+test.skip('closes drawer when escape key is pressed', function (t) {
+  
+  // TODO: not sure how to test keyboard events
+  
+  // var drawerView = new DrawerView({
+  //   forceNarrow: true
+  // });
+  
+  // document.body.appendChild(drawerView.el);
+  
+  // _.defer(function () {
+    
+  //   drawerView.openDrawer();
+    
+  //   t.equal(drawerView.selected, 'drawer', 'drawer open');
+    
+  //   // triggerEvent('keydown', {key: 'escape'});
+  //   trigger(document.body, 'keydown');
+    
+  //   t.equal(drawerView.selected, 'main', 'drawer closed');
+    
+  //   drawerView.remove();
+  //   t.end();
+  // });
+});
+
+test('resets drawer visible when taken out of narrow mode');
 test('renders with a header');
 test('overlay when drawer is selected');
 test('narrow mode to normal mode transition animations');

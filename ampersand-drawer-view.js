@@ -33,22 +33,31 @@ module.exports = View.extend({
   },
   
   events: {
-    'click [data-hook=toggle]': 'toggleDrawer'
+    'click [data-hook=toggle]': 'toggleDrawer',
+    'click [data-hook=drawer]': '_drawerClicked'
   },
   
   initialize: function () {
     
-    // Resize listeners
     var resizeHandler = _.bind(this._handleWindowResize, this);
+    var closeDrawer = _.bind(this.closeDrawer, this);
+    var closeDrawerWithKey = _.bind(this._closeDrawerWithKey, this);
+    
+    // Resize listeners
     window.addEventListener('resize', resizeHandler);
+    this.listenTo(this, 'resize', resizeHandler);
+    this.listenTo(this, 'change:forceNarrow', this._triggerNarrowMode, this);
+    this.listenTo(this, 'change:rightDrawer', this._triggerRightDrawerMode, this);
+    document.body.addEventListener('click', closeDrawer);
+    document.body.addEventListener('keydown', closeDrawerWithKey)
+    
+    // Handle teardown
     this.once('remove', function () {
       
       // TODO: test this
       window.removeEventListener('resize', resizeHandler);
+      document.body.removeEventListener('click', closeDrawer);
     });
-    this.listenTo(this, 'resize', resizeHandler);
-    this.listenTo(this, 'change:forceNarrow', this._triggerNarrowMode, this);
-    this.listenTo(this, 'change:rightDrawer', this._triggerRightDrawerMode, this);
     
     return this;
   },
@@ -95,11 +104,11 @@ module.exports = View.extend({
     var drawerStyles = {
       width: this.drawerWidth + 'px'
     };
-    drawerStyles[prefix.css + 'transition'] = 'all ' + this.drawerSpeed + 'ms ease-in-out;';
+    drawerStyles[prefix.js + 'Transition'] = prefix.css + 'transform ' + this.drawerSpeed + 'ms ease-in-out';
     style(this.drawer, drawerStyles);
     
     var mainStyles = {
-      width: prefixedCalc('100% - ' + this.drawerWidth + 'px') + ';'
+      width: prefixedCalc('100% - ' + this.drawerWidth + 'px')
     };
     style(this.main, mainStyles);
   },
@@ -148,6 +157,21 @@ module.exports = View.extend({
     this.el.classList.add('right');
   },
   
+  // Disables clicks from leaking outside the container
+  // This is useful for closing the drawer when clicking 
+  // outside of it.
+  _drawerClicked: function (e) {
+    
+    e.stopPropagation();
+  },
+  
+  _closeDrawerWithKey: function (e) {
+    
+    if (e.keyCode === 27 && this.selected === 'drawer') {
+      this.closeDrawer();
+    }
+  },
+    
   openDrawer: function () {
     
     // No need to do anything if drawer is visible in the layout
@@ -170,7 +194,10 @@ module.exports = View.extend({
     this.el.classList.remove('drawer');
   },
   
-  toggleDrawer: function () {
+  toggleDrawer: function (e) {
+    
+    e && e.stopPropagation();
+    e && e.preventDefault();
     
     (this.selected === 'main') ? this.openDrawer() : this.closeDrawer();
   }
