@@ -1,6 +1,5 @@
 var _ = require('underscore');
 var View = require('ampersand-view');
-var ViewSwitch = require('ampersand-view-switcher');
 var outerWidth = require('outerwidth');
 var classList = require('class-list');
 var defaultTemplate = require('./lib/default-template');
