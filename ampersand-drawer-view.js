@@ -8,11 +8,6 @@ var prefixedCalc = require('./lib/prefixed-calc');
 var prefix = require('./lib/prefix');
 var rawStyle = require('./lib/raw-style');
 
-// TODO: maybe the template shouldn't have HTML already in it and we
-// should render the drawer as an ampersand view with the data-hook/class info
-// on it
-// var DrawerContentView = require('./lib/ampersand-drawer-content-view');
-
 module.exports = View.extend({
   
   autoRender: true,
@@ -35,7 +30,7 @@ module.exports = View.extend({
     main: 'any',
     drawer: 'any',
     
-    subviews: 'any'
+    subviews: 'object'
   },
   
   events: {
@@ -83,8 +78,8 @@ module.exports = View.extend({
     this.main = this.queryByHook('adv-main');
     
     // Render Subviews
-    this.renderSubview(this.subviews.drawer, this.drawer);
-    this.renderSubview(this.subviews.main, this.main);
+    this.renderSubview(this.subviews.drawer.view, this.drawer);
+    this.renderSubview(this.subviews.main.view, this.main);
     
     this._setDefaultStyles();
     
@@ -110,30 +105,32 @@ module.exports = View.extend({
     });
     
     // Ensure subviews
-    if (!this.subviews) {
-      this.subviews = {};
-    }
+    this.subviews = _.extend({}, this.subviews);
     
-    if (!this.subviews.drawer) {
-      this.subviews.drawer = new DefaultView();
-    }
+    // Defaults for drawer
+    this.subviews.drawer = _.extend({
+      view: new DefaultView(),
+      width: 256
+    }, this.subviews.drawer);
     
-    if (!this.subviews.main) {
-      this.subviews.main = new DefaultView();
-    }
+    // Defaults for main
+    this.subviews.main = _.extend({
+      view: new DefaultView(),
+    }, this.subviews.main);
   },
   
   _setDefaultStyles: function () {
     
     var drawerStyles = {
-      width: this.drawerWidth + 'px'
+      width: this.subviews.drawer.width + 'px'
     };
     drawerStyles[prefix.js + 'Transition'] = prefix.css + 'transform ' + this.drawerSpeed + 'ms ease-in-out';
     style(this.drawer, drawerStyles);
     
     var mainStyles = {
-      width: prefixedCalc('100% - ' + this.drawerWidth + 'px')
+      width: prefixedCalc('100% - ' + this.subviews.drawer.width + 'px')
     };
+    mainStyles[prefix.js + 'Transition'] = 'width ' + this.drawerSpeed + 'ms ease-in-out';
     style(this.main, mainStyles);
   },
   
@@ -169,7 +166,7 @@ module.exports = View.extend({
     classList(this.el).remove(this.defaultNarrowClass);
     
     style(this.main, {
-      width: prefixedCalc('100% - ' + this.drawerWidth + 'px')
+      width: prefixedCalc('100% - ' + this.subviews.drawer.width + 'px')
     });
     
     this.narrow = false;

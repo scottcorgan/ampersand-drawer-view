@@ -67,7 +67,11 @@ test('default layout', function (t) {
 test('custom drawer width', function (t) {
   
   var drawerView = new DrawerView({
-    drawerWidth: 300
+    subviews: {
+      drawer: {
+        width: 300
+      }
+    }
   });
   document.body.appendChild(drawerView.el);
   
@@ -205,20 +209,27 @@ test('open close the drawer', function (t) {
     
     drawerView.openDrawer();
     
-    // Drawer visible
-    t.equal(drawerView.selected, 'drawer', 'drawer selected');
-    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
-    t.equal(outerWidth(drawerView.main), outerWidth(drawerView.el), 'main container width');
+    _.defer(function () {
+      
+      // Drawer visible
+      t.equal(drawerView.selected, 'drawer', 'drawer selected');
+      t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
+      t.equal(outerWidth(drawerView.main), outerWidth(drawerView.el), 'main container width');
+      
+      drawerView.closeDrawer();
+      
+      _.defer(function () {
+        
+        // Drawer hidden
+        t.equal(drawerView.selected, 'main', 'main selected');
+        t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is visible');
+        t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
+        
+        drawerView.remove();
+        t.end();
+      });
+    });
     
-    drawerView.closeDrawer();
-    
-    // Drawer hidden
-    t.equal(drawerView.selected, 'main', 'main selected');
-    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is visible');
-    t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
-    
-    drawerView.remove();
-    t.end();
   });
 });
 
@@ -234,20 +245,27 @@ test('toggles drawer', function (t) {
     
     drawerView.toggleDrawer();
     
-    // Drawer visible
-    t.equal(drawerView.selected, 'drawer', 'drawer selected');
-    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
-    t.equal(outerWidth(drawerView.main), outerWidth(drawerView.el), 'main container width');
+    _.defer(function () {
+      
+      // Drawer visible
+      t.equal(drawerView.selected, 'drawer', 'drawer selected');
+      t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_VISIBLE_MATRIX, 'drawer is visible');
+      t.equal(outerWidth(drawerView.main), outerWidth(drawerView.el), 'main container width');
+      
+      drawerView.toggleDrawer();
+      
+      _.defer(function () {
+        
+        // Drawer hidden
+        t.equal(drawerView.selected, 'main', 'main selected');
+        t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is visible');
+        t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
+        
+        drawerView.remove();
+        t.end();
+      });
+    });
     
-    drawerView.toggleDrawer();
-    
-    // Drawer hidden
-    t.equal(drawerView.selected, 'main', 'main selected');
-    t.equal(rawStyle(drawerView.drawer, prefix.css + 'transform'), DRAWER_HIDDEN_LEFT_MATRIX, 'drawer is visible');
-    t.equal(rawStyle(drawerView.main, 'width'), outerWidth(drawerView.el) + 'px', 'main container full width');
-    
-    drawerView.remove();
-    t.end();
   });
 });
 
@@ -319,15 +337,24 @@ test('closes drawer when clicking outside of drawer', function (t) {
     
     drawerView.openDrawer();
     
-    t.equal(drawerView.selected, 'drawer', 'drawer open');
-    trigger(drawerView.drawer, 'click');
-    t.equal(drawerView.selected, 'drawer', 'drawer stil open');
+    _.defer(function () {
+      
+      
+      t.equal(drawerView.selected, 'drawer', 'drawer open');
+      trigger(drawerView.drawer, 'click');
+      t.equal(drawerView.selected, 'drawer', 'drawer stil open');
+      
+      trigger(drawerView.main, 'click');
+      
+      _.defer(function () {
+        
+        t.equal(drawerView.selected, 'main', 'drawer closed');
+        
+        drawerView.remove();
+        t.end();
+      });
+    });
     
-    trigger(drawerView.main, 'click');
-    t.equal(drawerView.selected, 'main', 'drawer closed');
-    
-    drawerView.remove();
-    t.end();
   });
 });
 
@@ -339,7 +366,9 @@ test('custom drawer view', function (t) {
   var drawer = new Drawer();
   var drawerView = new DrawerView({
     subviews: {
-      drawer: drawer
+      drawer: {
+        view: drawer
+      }
     }
   });
   
@@ -347,7 +376,7 @@ test('custom drawer view', function (t) {
   
   _.defer(function () {
     
-    t.deepEqual(drawer, drawerView.subviews.drawer, 'injected custom drawer view');
+    t.deepEqual(drawer, drawerView.subviews.drawer.view, 'injected custom drawer view');
     t.equal(drawerView.drawer.innerHTML, '<div>Custom Drawer</div>', 'append custom template');
     
     drawerView.remove();
@@ -363,7 +392,9 @@ test('custom main view', function (t) {
   var main = new Main();
   var drawerView = new DrawerView({
     subviews: {
-      main: main
+      main: {
+        view: main
+      }
     }
   });
   
@@ -371,7 +402,7 @@ test('custom main view', function (t) {
   
   _.defer(function () {
     
-    t.deepEqual(main, drawerView.subviews.main, 'injected custom main view');
+    t.deepEqual(main, drawerView.subviews.main.view, 'injected custom main view');
     t.ok(drawerView.main.innerHTML.indexOf('<div>Custom Main View</div>') > -1, 'append custom template');
     
     drawerView.remove();
