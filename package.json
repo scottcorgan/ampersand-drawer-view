@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "ampersand-view": "^7.1.6",
+    "ampersand-view-switcher": "^1.1.2",
     "class-list": "^0.1.1",
     "outerwidth": "^1.0.0",
     "underscore": "^1.7.0"

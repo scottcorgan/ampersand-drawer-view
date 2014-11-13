@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var View = require('ampersand-view');
+var ViewSwitch = require('ampersand-view-switcher');
 var outerWidth = require('outerwidth');
 var classList = require('class-list');
 var defaultTemplate = require('./lib/default-template');
@@ -7,6 +8,7 @@ var style = require('./lib/outfit');
 var prefixedCalc = require('./lib/prefixed-calc');
 var prefix = require('./lib/prefix');
 var rawStyle = require('./lib/raw-style');
+var DrawerContentView = require('./lib/ampersand-drawer-content-view');
 
 module.exports = View.extend({
   
@@ -29,8 +31,10 @@ module.exports = View.extend({
     
     // Elements
     main: 'object',
-    drawer: 'object',
-    toggle: 'object'
+    drawer: 'any',
+    toggle: 'object',
+    
+    drawerContentView: 'any'
   },
   
   events: {
@@ -76,6 +80,10 @@ module.exports = View.extend({
     this.drawer = this.queryByHook('adv-drawer');
     this.main = this.queryByHook('adv-main');
     this.toggle = this.queryByHook('adv-toggle');
+    
+    //
+    var drawerContentView = this.drawerContentView || new DrawerContentView();
+    this.renderSubview(drawerContentView, this.drawer);
     
     // Track this value so it can be reset when it needs to be
     this.defaultToggleDisplay = rawStyle(this.toggle, 'display');

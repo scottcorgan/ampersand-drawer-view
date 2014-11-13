@@ -367,6 +367,28 @@ test('closes drawer when clicking outside of drawer', function (t) {
   });
 });
 
+test('custom drawer view', function (t) {
+  
+  var Drawer = View.extend({
+    template: '<div>Custom Drawer</div>'
+  });
+  var drawer = new Drawer();
+  var drawerView = new DrawerView({
+    drawerContentView: drawer
+  });
+  
+  document.body.appendChild(drawerView.el);
+  
+  _.defer(function () {
+    
+    t.deepEqual(drawer, drawerView.drawerContentView, 'injected custom drawer view');
+    t.equal(drawerView.queryByHook('adv-drawer').innerHTML, '<div>Custom Drawer</div>', 'append custom template');
+    
+    drawerView.remove();
+    t.end();
+  });
+});
+
 test.skip('closes drawer when escape key is pressed', function (t) {
   
   // TODO: not sure how to test keyboard events
@@ -393,7 +415,14 @@ test.skip('closes drawer when escape key is pressed', function (t) {
   // });
 });
 
-test('narrow mode to normal mode transition animations');
+
+
+
+
+
+
+
+
 
 // test('replaces default elements with elements defined with data-hook', function (t) {
   
