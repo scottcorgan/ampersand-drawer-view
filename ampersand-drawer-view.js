@@ -14,13 +14,11 @@ module.exports = View.extend({
   
   props: {
     template: ['string', true, defaultTemplate()],
-    drawerWidth: ['number', false, 256],
     responsiveWidth: ['number', false, 640],
     forceNarrow: ['boolean', false, false],
     rightDrawer: ['boolean', false, false],
     withHeader: ['boolean', false, false], // TODO: test this next!
     defaultNarrowClass: ['string', false , 'narrow'],
-    drawerSpeed: ['number', false, 0],
     
     // Flags
     narrow: ['boolean', false, false],
@@ -110,7 +108,8 @@ module.exports = View.extend({
     // Defaults for drawer
     this.subviews.drawer = _.extend({
       view: new DefaultView(),
-      width: 256
+      width: 256,
+      animationSpeed: 0
     }, this.subviews.drawer);
     
     // Defaults for main
@@ -124,13 +123,13 @@ module.exports = View.extend({
     var drawerStyles = {
       width: this.subviews.drawer.width + 'px'
     };
-    drawerStyles[prefix.js + 'Transition'] = prefix.css + 'transform ' + this.drawerSpeed + 'ms ease-in-out';
+    drawerStyles[prefix.js + 'Transition'] = prefix.css + 'transform ' + this.subviews.drawer.animationSpeed + 'ms ease-in-out';
     style(this.drawer, drawerStyles);
     
     var mainStyles = {
       width: prefixedCalc('100% - ' + this.subviews.drawer.width + 'px')
     };
-    mainStyles[prefix.js + 'Transition'] = 'width ' + this.drawerSpeed + 'ms ease-in-out';
+    mainStyles[prefix.js + 'Transition'] = 'width ' + this.subviews.drawer.animationSpeed + 'ms ease-in-out';
     style(this.main, mainStyles);
   },
   

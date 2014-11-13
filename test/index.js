@@ -272,14 +272,18 @@ test('toggles drawer', function (t) {
 test('drawer animation speed', function (t) {
   
   var drawerView = new DrawerView({
-    drawerSpeed: 120
+    subviews: {
+      drawer: {
+        animationSpeed: 120
+      }
+    }
   });
   
   document.body.appendChild(drawerView.el);
   
   // TODO: this test doesn't really test anything, but
   // there were issues getting the transition style
-  t.equal(drawerView.drawerSpeed, 120, 'drawer speed');  
+  t.equal(drawerView.subviews.drawer.animationSpeed, 120, 'drawer speed');  
   
   drawerView.remove();
   t.end();
@@ -333,11 +337,11 @@ test('closes drawer when clicking outside of drawer', function (t) {
   
   document.body.appendChild(drawerView.el);
   
-  _.defer(function () {
+ _.defer(function () {
     
     drawerView.openDrawer();
     
-    _.defer(function () {
+   _.defer(function () {
       
       
       t.equal(drawerView.selected, 'drawer', 'drawer open');
@@ -346,7 +350,7 @@ test('closes drawer when clicking outside of drawer', function (t) {
       
       trigger(drawerView.main, 'click');
       
-      _.defer(function () {
+     _.defer(function () {
         
         t.equal(drawerView.selected, 'main', 'drawer closed');
         
