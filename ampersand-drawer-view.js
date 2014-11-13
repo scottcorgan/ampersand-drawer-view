@@ -8,7 +8,11 @@ var style = require('./lib/outfit');
 var prefixedCalc = require('./lib/prefixed-calc');
 var prefix = require('./lib/prefix');
 var rawStyle = require('./lib/raw-style');
-var DrawerContentView = require('./lib/ampersand-drawer-content-view');
+
+// TODO: maybe the template shouldn't have HTML already in it and we
+// should render the drawer as an ampersand view with the data-hook/class info
+// on it
+// var DrawerContentView = require('./lib/ampersand-drawer-content-view');
 
 module.exports = View.extend({
   
@@ -30,11 +34,11 @@ module.exports = View.extend({
     selected: ['string', false, 'main'],
     
     // Elements
-    main: 'object',
+    main: 'any',
     drawer: 'any',
-    toggle: 'object',
+    toggle: 'any',
     
-    drawerContentView: 'any'
+    subviews: 'any'
   },
   
   events: {
@@ -43,6 +47,8 @@ module.exports = View.extend({
   },
   
   initialize: function () {
+    
+    this._setDefaultSubviews();
     
     var resizeHandler = _.bind(this._handleWindowResize, this);
     var closeDrawer = _.bind(this.closeDrawer, this);
@@ -81,9 +87,9 @@ module.exports = View.extend({
     this.main = this.queryByHook('adv-main');
     this.toggle = this.queryByHook('adv-toggle');
     
-    //
-    var drawerContentView = this.drawerContentView || new DrawerContentView();
-    this.renderSubview(drawerContentView, this.drawer);
+    // Render Subviews
+    // this.subviews.drawer = this.subviews.drawer || new DrawerContentView();
+    this.renderSubview(this.subviews.drawer, this.drawer);
     
     // Track this value so it can be reset when it needs to be
     this.defaultToggleDisplay = rawStyle(this.toggle, 'display');
@@ -106,6 +112,22 @@ module.exports = View.extend({
     }, this));
     
     return this;
+  },
+  
+  _setDefaultSubviews: function () {
+    
+    var DefaultView = View.extend({
+      template: '<div></div>'
+    });
+    
+    // Ensure subviews
+    if (!this.subviews) {
+      this.subviews = {};
+    }
+    
+    if (!this.subviews.drawer) {
+      this.subviews.drawer = new DefaultView();
+    }
   },
   
   _setDefaultStyles: function () {

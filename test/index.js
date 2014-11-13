@@ -374,14 +374,16 @@ test('custom drawer view', function (t) {
   });
   var drawer = new Drawer();
   var drawerView = new DrawerView({
-    drawerContentView: drawer
+    subviews: {
+      drawer: drawer
+    }
   });
   
   document.body.appendChild(drawerView.el);
   
   _.defer(function () {
     
-    t.deepEqual(drawer, drawerView.drawerContentView, 'injected custom drawer view');
+    t.deepEqual(drawer, drawerView.subviews.drawer, 'injected custom drawer view');
     t.equal(drawerView.queryByHook('adv-drawer').innerHTML, '<div>Custom Drawer</div>', 'append custom template');
     
     drawerView.remove();
