@@ -1,6 +1,6 @@
 {
   "name": "ampersand-drawer-view",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Ampersand view class for hamburger drawer-like layouts",
   "main": "ampersand-drawer-view.js",
   "scripts": {
